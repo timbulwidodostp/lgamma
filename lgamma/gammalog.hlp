@@ -1,0 +1,138 @@
+.-
+help for ^gammalog^                                               [STB-53: sg126]
+.-
+
+Gamma distribution-log link MLE model
+-------------------------------------
+
+    ^gammalog^ depvar [indepvars] [weight] [^if^ exp] [^in^ range] [^,^ ^ir^r ^ef^orm
+                    ^e^xposure^(^varname^)^ ^o^ffset^(^varname^)^ ^r^obust ^cl^uster^(^varname^)^
+		    ^sc^ore^(^newvarnames^)^ ^nocon^stant ^l^evel^(^#^)^ maximize_options ]
+
+
+^fweight^s, ^iweight^s, and ^pweight^s are allowed; see help @weights@.
+
+^gammalog^ shares the features of all estimation commands; see help @est@.
+
+
+The syntax of @predict@ following ^gammalog^ is
+
+	^predict^ [type] newvarname [^if^ exp] [^in^ range] [^,^ statistic ^nooff^set]
+
+where statistic is
+
+	^n^               predicted values of depvar; the default
+	^ir^              incidence rate (equiv. to ^predict^ ..., ^n nooffset^)
+	^xb^              linear prediction
+	^stdp^            standard error of the linear prediction
+
+These statistics are available both in and out of sample; type "^predict^ ...
+^if e(sample)^ ..." if wanted only for the estimation sample.
+
+
+Description
+-----------
+
+^gammalog^ estimates a full-information maximum-likelihood version of the gamma
+family-log link generalized linear model.  That is, the coefficient estimates
+produced by ^gammalog^ are approximately equal to the coefficient estimates
+produced by ^glm^ ...^, family(gamma) link(log)^; see help @glm@.  The standard
+errors, however, will be slightly different since the log link is not the
+canonical link for the gamma family.
+
+^gammalog^ estimates over- or underdispersion models; as such, it can be
+considered an alternative to the negative binomial model; see help @nbreg@.
+The mean of the ^gammalog^ model is given by exp(x*b) and the dispersion is
+phi*exp(x*b). Hence, the dispersion is directly proportional to the mean.
+
+Note, however, that ^gammalog^ differs from ^nbreg^ and other count models in
+that the outcome variable is assumed to be continuous and strictly greater
+than zero.  (^gammalog^ does not allow depvar to take on the value zero
+or any negative value.)
+
+
+Options
+-------
+
+^irr^ and ^eform^ both do the same thing.  They report estimated coefficients
+    transformed to incidence-rate ratios.
+
+^exposure(^varname^)^ and ^offset(^varname^)^ are different ways of specifying the same
+    thing.  ^exposure()^ specifies a variable that reflects the amount of expo-
+    sure over which depvar events were observed for each observation.  ^offset()^
+    specifies a variable that is to be entered directly into the log-link func-
+    tion with coefficient 1; thus exposure is assumed to be exp(varname).
+
+^robust^ specifies the Huber/White/sandwich estimator of variance is to be used
+    in place of the traditional calculation; see ^[U] 23.11 Obtaining robust^
+    ^variance estimates^.  ^robust^ combined with ^cluster()^ allows observations
+    which are not independent within cluster (although they be be independent
+    between clusters).  If you specify ^pweight^s, ^robust^ is implied.
+
+^cluster(^varname^)^ specifies that the observations are independent across groups
+    (clusters) but not necessarily within groups.  varname specifies to which
+    group each observation belongs; e.g., ^cluster(personid)^ in data with
+    repeated observations on individuals.  See ^[U] 23.11 Obtaining robust^
+    ^variance estimates^.  ^cluster()^ can be used with @pweight@s to produce esti-
+    mates for unstratified cluster-sampled data.  Specifying ^cluster()^ implies
+    ^robust^.
+
+^score(^newvars^)^ creates newvar containing each observation's contribution to the
+    score; see ^[U] 23.12 Obtaining scores^.  If two new varnames are specified,
+    then the score from the ancillary parameter equation is also saved.
+
+^noconstant^ suppresses the constant term (intercept) in the regression.
+
+^level(^#^)^ specifies the confidence level, in percent, for confidence intervals;
+    see help @level@.
+
+maximize_options control the maximization process; see help @maximize@.  You
+    should never have to specify them.
+
+
+Options for ^predict^
+-------------------
+
+^n^, the default, calculates the predicted value of depvar, which is exp(x_j*b)
+    if neither ^offset()^ nor ^exposure()^ was specified when the model was
+    estimated, or exp(x_j*b + offset) if ^offset()^ was specified, or
+    exp(x_j*b)*exposure if ^exposure()^ was specified.
+
+^ir^ calculates the incidence rate exp(x_j*b), the predicted value of depvar
+    when exposure is 1.  This is equivalent to ^n^ when neither ^offset()^ nor
+    ^exposure()^ was specified when the model was estimated.
+
+^xb^ calculates the linear prediction.
+
+^stdp^ calculates the standard error of the linear prediction.
+
+^nooffset^ is relevant only if you specified ^offset()^ or ^exposure()^ when you
+    estimated the model.  The above calculations are then made ignoring the
+    exposure or offset variable and thus, for instance, ^n^ == ^ir^).
+
+
+Examples
+--------
+
+	. ^gammalog deaths coh2 coh3^
+	. ^gammalog deaths coh2 coh3, exposure(obstime)^
+	. ^predict dhat if e(sample)^
+	. ^predict rate, ir^
+
+
+Authors
+-------
+
+^gammalog^ was written by Bill Sribney of StataCorp with invaluable assistance
+provided by Joe Hilbe.
+
+For questions about this program or to report a problem, please contact
+Bill Sribney at sribney@@fcc.net.
+
+
+Also see
+--------
+
+ Manual:  ^[U] 23 Estimation and post-estimation commands^,
+	  ^[U] 29 Overview of model estimation in Stata^,
+On-line:  help for @est@, @postest@; @glm@, @nbreg@, @poisson@, @zinb@
