@@ -1,4 +1,11 @@
-D 'DEA': Data envelopment analysis
+D 'lgamma': Gamma distribution-log link MLE model Use lgamma With STATA 19
 D
-F dea.ado
-F dea.sthlp
+F gamln_lf.ado
+F gammalog.ado
+F gammalog.hlp
+F ivgln_ll.ado
+F ivglog.ado
+F ivglog.hlp
+F lgamm_ll.ado
+F lgamma.ado
+F lgamma.hlp
