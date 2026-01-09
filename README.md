@@ -1,6 +1,8 @@
 # lgamma
 Gamma distribution-log link MLE model Use lgamma With STATA 19
 
+https://www.youtube.com/watch?v=B3FD7AA1OG8
+
 Olah Data Semarang
 
 WA: +6285227746673 (085227746673)
